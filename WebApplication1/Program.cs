@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.Configure<CherryLabSettings>(builder.Configuration.GetSection("CherryLab"));
+builder.Services.AddSingleton<CherryLabFormatter>();
 builder.Services.AddSingleton<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
