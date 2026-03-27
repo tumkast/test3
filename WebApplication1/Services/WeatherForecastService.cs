@@ -16,5 +16,10 @@ namespace WebApplication1.Services
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             };
         }
+
+        public IReadOnlyList<string> GetSummaryLabels() => Summaries;
+
+        public string GetRandomSummaryLabel() =>
+            Summaries[Random.Shared.Next(Summaries.Length)];
     }
 }

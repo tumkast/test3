@@ -39,14 +39,14 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<string>> GetSummaries()
         {
-            return Ok(Summaries);
+            return Ok(_forecastService.GetSummaryLabels());
         }
 
         [HttpGet("random-summary")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public ActionResult<string> GetRandomSummary()
         {
-            return Ok(Summaries[Random.Shared.Next(Summaries.Length)]);
+            return Ok(_forecastService.GetRandomSummaryLabel());
         }
 
         [HttpGet("today")]
