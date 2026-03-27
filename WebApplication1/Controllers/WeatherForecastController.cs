@@ -24,7 +24,9 @@ namespace WebApplication1.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
-            return _forecastService.GetForecastsForNextDays(5);
+            var rows = _forecastService.GetForecastsForNextDays(5);
+            _logger.LogDebug("Returning {Count} default forecast rows", rows.Count);
+            return rows;
         }
 
         [HttpGet("summaries")]
