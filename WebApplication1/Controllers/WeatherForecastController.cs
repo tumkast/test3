@@ -29,5 +29,12 @@ namespace WebApplication1.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet("summaries")]
+        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<string>> GetSummaries()
+        {
+            return Ok(Summaries);
+        }
     }
 }
