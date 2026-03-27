@@ -9,19 +9,24 @@ namespace WebApplication1.Controllers
     {
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IWeatherForecastService _forecastService;
+        private readonly IWeatherLabService _labService;
 
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger,
-            IWeatherForecastService forecastService)
+            IWeatherForecastService forecastService,
+            IWeatherLabService labService)
         {
             _logger = logger;
             _forecastService = forecastService;
+            _labService = labService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
-            return _forecastService.GetForecastsForNextDays(5);
+            var rows = _forecastService.GetForecastsForNextDays(5);
+            _logger.LogDebug("Returning {Count} default forecast rows", rows.Count);
+            return rows;
         }
 
         [HttpGet("summaries")]
@@ -31,18 +36,18 @@ namespace WebApplication1.Controllers
             return Ok(_forecastService.GetSummaryLabels());
         }
 
-        [HttpGet("random-summary")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public ActionResult<string> GetRandomSummary()
-        {
-            return Ok(_forecastService.GetRandomSummaryLabel());
-        }
-
         [HttpGet("today")]
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         public ActionResult<WeatherForecast> GetToday()
         {
-            return Ok(_forecastService.GetForecastForDate(DateOnly.FromDateTime(DateTime.Today)));
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var forecast = _forecastService.GetForecastForDate(today);
+            _logger.LogInformation(
+                "Serving today forecast for {Date}: {TempC}°C, {Summary}",
+                forecast.Date,
+                forecast.TemperatureC,
+                forecast.Summary);
+            return Ok(forecast);
         }
 
         [HttpGet("forecast-for/{daysOffset:int}")]
@@ -51,6 +56,27 @@ namespace WebApplication1.Controllers
         {
             return Ok(_forecastService.GetForecastForDate(
                 DateOnly.FromDateTime(DateTime.Today.AddDays(daysOffset))));
+        }
+
+        [HttpGet("lab/summary-count")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public ActionResult<int> GetLabSummaryCount()
+        {
+            return Ok(_labService.GetConfiguredSummaryCount());
+        }
+
+        [HttpGet("lab/temperature-band")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public ActionResult<string> GetLabTemperatureBand([FromQuery] int celsius)
+        {
+            return Ok(_labService.DescribeCelsius(celsius));
+        }
+
+        [HttpGet("lab/stats")]
+        [ProducesResponseType(typeof(IReadOnlyDictionary<string, int>), StatusCodes.Status200OK)]
+        public ActionResult<IReadOnlyDictionary<string, int>> GetLabStats()
+        {
+            return Ok(_labService.GetQuickStats());
         }
     }
 }
