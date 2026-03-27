@@ -9,13 +9,16 @@ namespace WebApplication1.Controllers
     {
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IWeatherForecastService _forecastService;
+        private readonly IWeatherLabService _labService;
 
         public WeatherForecastController(
             ILogger<WeatherForecastController> logger,
-            IWeatherForecastService forecastService)
+            IWeatherForecastService forecastService,
+            IWeatherLabService labService)
         {
             _logger = logger;
             _forecastService = forecastService;
+            _labService = labService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -31,13 +34,6 @@ namespace WebApplication1.Controllers
             return Ok(_forecastService.GetSummaryLabels());
         }
 
-        [HttpGet("random-summary")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public ActionResult<string> GetRandomSummary()
-        {
-            return Ok(_forecastService.GetRandomSummaryLabel());
-        }
-
         [HttpGet("today")]
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         public ActionResult<WeatherForecast> GetToday()
@@ -51,6 +47,27 @@ namespace WebApplication1.Controllers
         {
             return Ok(_forecastService.GetForecastForDate(
                 DateOnly.FromDateTime(DateTime.Today.AddDays(daysOffset))));
+        }
+
+        [HttpGet("lab/summary-count")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        public ActionResult<int> GetLabSummaryCount()
+        {
+            return Ok(_labService.GetConfiguredSummaryCount());
+        }
+
+        [HttpGet("lab/temperature-band")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public ActionResult<string> GetLabTemperatureBand([FromQuery] int celsius)
+        {
+            return Ok(_labService.DescribeCelsius(celsius));
+        }
+
+        [HttpGet("lab/stats")]
+        [ProducesResponseType(typeof(IReadOnlyDictionary<string, int>), StatusCodes.Status200OK)]
+        public ActionResult<IReadOnlyDictionary<string, int>> GetLabStats()
+        {
+            return Ok(_labService.GetQuickStats());
         }
     }
 }
