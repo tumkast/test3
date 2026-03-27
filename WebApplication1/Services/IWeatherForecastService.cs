@@ -7,5 +7,7 @@ namespace WebApplication1.Services
         IReadOnlyList<string> GetSummaryLabels();
 
         string GetRandomSummaryLabel();
+
+        IReadOnlyList<WeatherForecast> GetForecastsForNextDays(int count);
     }
 }

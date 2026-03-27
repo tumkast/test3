@@ -21,5 +21,12 @@ namespace WebApplication1.Services
 
         public string GetRandomSummaryLabel() =>
             Summaries[Random.Shared.Next(Summaries.Length)];
+
+        public IReadOnlyList<WeatherForecast> GetForecastsForNextDays(int count)
+        {
+            return Enumerable.Range(1, count)
+                .Select(i => GetForecastForDate(DateOnly.FromDateTime(DateTime.Now.AddDays(i))))
+                .ToArray();
+        }
     }
 }
