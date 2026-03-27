@@ -36,5 +36,12 @@ namespace WebApplication1.Controllers
         {
             return Ok(Summaries);
         }
+
+        [HttpGet("random-summary")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public ActionResult<string> GetRandomSummary()
+        {
+            return Ok(Summaries[Random.Shared.Next(Summaries.Length)]);
+        }
     }
 }
