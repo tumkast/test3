@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -12,10 +13,14 @@ namespace WebApplication1.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IWeatherForecastService _forecastService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(
+            ILogger<WeatherForecastController> logger,
+            IWeatherForecastService forecastService)
         {
             _logger = logger;
+            _forecastService = forecastService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -48,12 +53,7 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         public ActionResult<WeatherForecast> GetToday()
         {
-            return Ok(new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            });
+            return Ok(_forecastService.GetForecastForDate(DateOnly.FromDateTime(DateTime.Today)));
         }
 
         [HttpGet("forecast-for/{daysOffset:int}")]
