@@ -38,7 +38,14 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         public ActionResult<WeatherForecast> GetToday()
         {
-            return Ok(_forecastService.GetForecastForDate(DateOnly.FromDateTime(DateTime.Today)));
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var forecast = _forecastService.GetForecastForDate(today);
+            _logger.LogInformation(
+                "Serving today forecast for {Date}: {TempC}°C, {Summary}",
+                forecast.Date,
+                forecast.TemperatureC,
+                forecast.Summary);
+            return Ok(forecast);
         }
 
         [HttpGet("forecast-for/{daysOffset:int}")]
