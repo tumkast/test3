@@ -43,5 +43,29 @@ namespace WebApplication1.Controllers
         {
             return Ok(Summaries[Random.Shared.Next(Summaries.Length)]);
         }
+
+        [HttpGet("today")]
+        [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
+        public ActionResult<WeatherForecast> GetToday()
+        {
+            return Ok(new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            });
+        }
+
+        [HttpGet("forecast-for/{daysOffset:int}")]
+        [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
+        public ActionResult<WeatherForecast> GetForecastFor(int daysOffset)
+        {
+            return Ok(new WeatherForecast
+            {
+                Date = DateOnly.FromDateTime(DateTime.Today.AddDays(daysOffset)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            });
+        }
     }
 }
