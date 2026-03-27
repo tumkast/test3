@@ -60,12 +60,8 @@ namespace WebApplication1.Controllers
         [ProducesResponseType(typeof(WeatherForecast), StatusCodes.Status200OK)]
         public ActionResult<WeatherForecast> GetForecastFor(int daysOffset)
         {
-            return Ok(new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Today.AddDays(daysOffset)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            });
+            return Ok(_forecastService.GetForecastForDate(
+                DateOnly.FromDateTime(DateTime.Today.AddDays(daysOffset))));
         }
     }
 }
