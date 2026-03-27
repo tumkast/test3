@@ -10,11 +10,16 @@ namespace WebApplication1.Controllers
     {
         private readonly CherryLabSettings _settings;
         private readonly CherryLabFormatter _formatter;
+        private readonly ILogger<CherryLabController> _logger;
 
-        public CherryLabController(IOptions<CherryLabSettings> options, CherryLabFormatter formatter)
+        public CherryLabController(
+            IOptions<CherryLabSettings> options,
+            CherryLabFormatter formatter,
+            ILogger<CherryLabController> logger)
         {
             _settings = options.Value;
             _formatter = formatter;
+            _logger = logger;
         }
 
         [HttpGet("alpha")]
@@ -29,6 +34,19 @@ namespace WebApplication1.Controllers
         public ActionResult<object> Beta()
         {
             return Ok(new { branch = "B", payload = _formatter.FormatBeta(_settings) });
+        }
+
+        [HttpGet("gamma")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<object> Gamma()
+        {
+            _logger.LogDebug("Cherry-lab gamma invoked");
+            return Ok(new
+            {
+                branch = "C",
+                tag = _settings.GammaTag,
+                formatted = _formatter.FormatGamma(_settings)
+            });
         }
     }
 }
